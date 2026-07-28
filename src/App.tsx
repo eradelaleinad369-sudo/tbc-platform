@@ -1,5 +1,7 @@
-import { useState } from 'react'
-import { Link, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
+import { supabase } from './lib/supabaseClient'
+import type { Session } from '@supabase/supabase-js'
 
 const publicLinks = [
   { to: '/members', label: 'Members' },
@@ -11,8 +13,22 @@ const memberLinks = [{ to: '/roles', label: 'Roles' }]
 
 export default function App() {
   const { pathname } = useLocation()
+  const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
+  const [session, setSession] = useState<Session | null>(null)
   const allLinks = [...memberLinks, ...publicLinks]
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => setSession(data.session))
+    const { data: listener } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
+    return () => listener.subscription.unsubscribe()
+  }, [])
+
+  async function handleLogout() {
+    await supabase.auth.signOut()
+    setMenuOpen(false)
+    navigate('/')
+  }
 
   return (
     <div className="min-h-screen bg-white text-navy">
@@ -37,9 +53,20 @@ export default function App() {
                 {link.label}
               </Link>
             ))}
-            <Link to="/login" className="bg-brand-orange text-navy font-semibold px-4 py-1.5 rounded-full hover:bg-white transition-colors">
-              Login
-            </Link>
+            {session ? (
+              <>
+                <Link to="/profile" className={`transition-colors hover:text-brand-orange ${pathname === '/profile' ? 'text-brand-orange' : ''}`}>
+                  Profile
+                </Link>
+                <button onClick={handleLogout} className="text-white font-mono text-xs px-4 py-1.5 rounded border border-white/20 hover:border-brand-orange transition-colors">
+                  logout()
+                </button>
+              </>
+            ) : (
+              <Link to="/login" className="bg-brand-orange text-navy font-mono text-xs font-semibold px-4 py-1.5 rounded hover:bg-white transition-colors">
+                login()
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
@@ -69,21 +96,45 @@ export default function App() {
                 {link.label}
               </Link>
             ))}
-            <Link
-              to="/login"
-              onClick={() => setMenuOpen(false)}
-              className="bg-brand-orange text-navy font-semibold px-4 py-2 rounded-full text-center mt-2"
-            >
-              Login
-            </Link>
+            {session ? (
+              <>
+                <Link
+                  to="/profile"
+                  onClick={() => setMenuOpen(false)}
+                  className={`py-2.5 text-sm text-white/80 hover:text-brand-orange ${pathname === '/profile' ? 'text-brand-orange' : ''}`}
+                >
+                  Profile
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="text-white font-mono text-xs px-4 py-2 rounded border border-white/20 text-center mt-2"
+                >
+                  logout()
+                </button>
+              </>
+            ) : (
+              <Link
+                to="/login"
+                onClick={() => setMenuOpen(false)}
+                className="bg-brand-orange text-navy font-mono text-xs font-semibold px-4 py-2 rounded text-center mt-2"
+              >
+                login()
+              </Link>
+            )}
           </div>
         )}
       </header>
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <Outlet />
       </main>
-      <footer className="bg-navy text-white/50 text-sm text-center py-6 mt-16">
-        The Builders Circle — LASU Epe Campus
+      <footer className="bg-navy text-white/40 text-xs font-mono py-4 mt-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2">
+          <span>THE_BUILDERS_CIRCLE · LASU_EPE_CAMPUS</span>
+          <span className="flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-brand-green inline-block" />
+            SYSTEM_ONLINE
+          </span>
+        </div>
       </footer>
     </div>
   )
