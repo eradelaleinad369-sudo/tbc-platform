@@ -14,31 +14,32 @@ import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
 import RequireAuth from './components/RequireAuth'
 import RequireActiveMember from './components/RequireActiveMember'
+import { AuthProvider } from './lib/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />}>
-          <Route index element={<Home />} />
-          <Route path="members" element={<Members />} />
-          <Route path="projects" element={<Projects />} />
-          <Route path="apply" element={<Apply />} />
-          <Route path="login" element={<Login />} />
-          <Route path="signup" element={<SignUp />} />
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<App />}>
+            <Route index element={<Home />} />
+            <Route path="members" element={<Members />} />
+            <Route path="projects" element={<Projects />} />
+            <Route path="apply" element={<Apply />} />
+            <Route path="login" element={<Login />} />
+            <Route path="signup" element={<SignUp />} />
 
-          {/* Logged in, any status */}
-          <Route element={<RequireAuth />}>
-            <Route path="profile" element={<Profile />} />
-          </Route>
+            <Route element={<RequireAuth />}>
+              <Route path="profile" element={<Profile />} />
+            </Route>
 
-          {/* Logged in AND approved (status = active) */}
-          <Route element={<RequireActiveMember />}>
-            <Route path="roles" element={<Roles />} />
-            <Route path="dashboard" element={<Dashboard />} />
+            <Route element={<RequireActiveMember />}>
+              <Route path="roles" element={<Roles />} />
+              <Route path="dashboard" element={<Dashboard />} />
+            </Route>
           </Route>
-        </Route>
-      </Routes>
-    </BrowserRouter>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>,
 )
