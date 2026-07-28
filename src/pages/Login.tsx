@@ -1,39 +1,40 @@
 import { FormEvent, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 
 export default function Login() {
-  const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const navigate = useNavigate()
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault()
-    const email = new FormData(e.currentTarget).get('email') as string
-    const { error } = await supabase.auth.signInWithOtp({ email })
-    if (error) setError(error.message)
-    else setSent(true)
-  }
+    setError(null)
+    const form = new FormData(e.currentTarget)
+    const email = form.get('email') as string
+    const password = form.get('password') as string
 
-  if (sent) {
-    return (
-      <div className="max-w-sm">
-        <p className="text-brand-green font-semibold">Check your email</p>
-        <p className="text-slate-500 mt-2">We sent you a login link.</p>
-      </div>
-    )
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error) setError(error.message)
+    else navigate('/dashboard')
   }
 
   return (
     <div className="max-w-sm">
-      <p className="text-brand-green font-semibold text-sm tracking-wide uppercase mb-2">Members only</p>
+      <p className="text-brand-green font-mono text-sm tracking-widest uppercase mb-2">// members only</p>
       <h1 className="font-display text-3xl text-navy mb-6">Login</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <input name="email" type="email" placeholder="Email" required
-          className="w-full border border-slate-300 rounded-lg px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
+          className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
+        <input name="password" type="password" placeholder="Password" required
+          className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
         {error && <p className="text-red-600 text-sm">{error}</p>}
-        <button type="submit" className="bg-navy text-white font-semibold px-5 py-2.5 rounded-full hover:bg-brand-orange transition-colors">
-          Send login link
+        <button type="submit" className="bg-navy text-white font-mono text-sm font-semibold px-5 py-2.5 rounded hover:bg-brand-orange transition-colors">
+          login()
         </button>
       </form>
+      <p className="text-sm text-slate-500 mt-4">
+        No account yet? <Link to="/signup" className="text-brand-orange font-medium">Sign up</Link>
+      </p>
     </div>
   )
 }
