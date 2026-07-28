@@ -1,19 +1,15 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Outlet } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from '../lib/AuthContext'
 
-// Stricter than RequireAuth: not just logged in, but an approved (status='active') member.
 export default function RequireActiveMember() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session, loading } = useAuth()
   const [status, setStatus] = useState<string | null>(null)
   const [checked, setChecked] = useState(false)
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-  }, [])
-
-  useEffect(() => {
+    if (loading) return
     if (!session) {
       setChecked(true)
       return
@@ -27,9 +23,9 @@ export default function RequireActiveMember() {
         setStatus(data?.status ?? null)
         setChecked(true)
       })
-  }, [session])
+  }, [session, loading])
 
-  if (!checked) return null
+  if (loading || !checked) return null
   if (!session) return <Navigate to="/login" replace />
 
   if (status !== 'active') {
