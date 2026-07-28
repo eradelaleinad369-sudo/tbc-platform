@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from '../lib/AuthContext'
 
 type Meeting = { id: string; title: string; starts_at: string; location: string | null }
 type Resource = { id: string; title: string; type: string; url: string | null; category: string | null }
 
 export default function Dashboard() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session } = useAuth()
   const [meetings, setMeetings] = useState<Meeting[]>([])
   const [resources, setResources] = useState<Resource[]>([])
   const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
-    return () => listener.subscription.unsubscribe()
-  }, [])
 
   useEffect(() => {
     if (!session) return
