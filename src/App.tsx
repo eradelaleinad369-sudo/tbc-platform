@@ -4,6 +4,7 @@ import { supabase } from './lib/supabaseClient'
 import type { Session } from '@supabase/supabase-js'
 
 const publicLinks = [
+  { to: '/', label: 'Home' },
   { to: '/members', label: 'Members' },
   { to: '/projects', label: 'Projects' },
   { to: '/apply', label: 'Apply' },
