@@ -10,6 +10,7 @@ import Projects from './pages/Projects'
 import Apply from './pages/Apply'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
+import RequireAuth from './components/RequireAuth'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -17,12 +18,15 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />}>
           <Route index element={<Home />} />
-          <Route path="roles" element={<Roles />} />
           <Route path="members" element={<Members />} />
           <Route path="projects" element={<Projects />} />
           <Route path="apply" element={<Apply />} />
           <Route path="login" element={<Login />} />
-          <Route path="dashboard" element={<Dashboard />} />
+
+          <Route element={<RequireAuth />}>
+            <Route path="roles" element={<Roles />} />
+            <Route path="dashboard" element={<Dashboard />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
