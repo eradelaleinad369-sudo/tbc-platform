@@ -11,7 +11,9 @@ import Apply from './pages/Apply'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
+import Profile from './pages/Profile'
 import RequireAuth from './components/RequireAuth'
+import RequireActiveMember from './components/RequireActiveMember'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -25,7 +27,13 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<SignUp />} />
 
+          {/* Logged in, any status */}
           <Route element={<RequireAuth />}>
+            <Route path="profile" element={<Profile />} />
+          </Route>
+
+          {/* Logged in AND approved (status = active) */}
+          <Route element={<RequireActiveMember />}>
             <Route path="roles" element={<Roles />} />
             <Route path="dashboard" element={<Dashboard />} />
           </Route>
