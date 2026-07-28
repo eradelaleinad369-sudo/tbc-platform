@@ -7,12 +7,17 @@ import AnimatedCounter from '../components/AnimatedCounter'
 
 export default function Home() {
   const [counts, setCounts] = useState({ members: 0, projects: 0, roles: 10 })
+  const [debugError, setDebugError] = useState<string | null>(null)
 
   useEffect(() => {
     Promise.all([
       supabase.from('members').select('id', { count: 'exact', head: true }).eq('status', 'active'),
       supabase.from('projects').select('id', { count: 'exact', head: true }),
     ]).then(([m, p]) => {
+      if (m.error) console.error('members count error:', m.error)
+      if (p.error) console.error('projects count error:', p.error)
+      const errs = [m.error?.message, p.error?.message].filter(Boolean)
+      if (errs.length) setDebugError(errs.join(' | '))
       setCounts({ members: m.count ?? 0, projects: p.count ?? 0, roles: 10 })
     })
   }, [])
@@ -50,6 +55,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {debugError && (
+        <p className="text-red-600 text-xs font-mono mt-3 break-words">stats_error: {debugError}</p>
+      )}
 
       {/* Live stats — labeled like instrument readouts */}
       <section className="grid grid-cols-3 gap-px bg-slate-200 -mt-8 relative z-10 max-w-lg mx-auto border border-slate-200 rounded-lg overflow-hidden">
