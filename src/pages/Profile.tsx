@@ -1,6 +1,6 @@
 import { FormEvent, useEffect, useState } from 'react'
 import { supabase } from '../lib/supabaseClient'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from '../lib/AuthContext'
 
 type MemberRow = {
   id: string
@@ -13,14 +13,10 @@ type MemberRow = {
 }
 
 export default function Profile() {
-  const [session, setSession] = useState<Session | null>(null)
+  const { session } = useAuth()
   const [member, setMember] = useState<MemberRow | null>(null)
   const [loading, setLoading] = useState(true)
   const [saved, setSaved] = useState(false)
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-  }, [])
 
   useEffect(() => {
     if (!session) return
