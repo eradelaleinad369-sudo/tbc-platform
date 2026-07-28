@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './lib/supabaseClient'
-import type { Session } from '@supabase/supabase-js'
+import { useAuth } from './lib/AuthContext'
 
 const publicLinks = [
   { to: '/', label: 'Home' },
@@ -16,14 +16,8 @@ export default function App() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
-  const [session, setSession] = useState<Session | null>(null)
+  const { session } = useAuth()
   const allLinks = [...memberLinks, ...publicLinks]
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => setSession(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_e, s) => setSession(s))
-    return () => listener.subscription.unsubscribe()
-  }, [])
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -43,7 +37,6 @@ export default function App() {
             </span>
           </Link>
 
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6 text-sm text-white/80">
             {allLinks.map((link) => (
               <Link
@@ -70,7 +63,6 @@ export default function App() {
             )}
           </div>
 
-          {/* Mobile menu button */}
           <button
             className="md:hidden text-white p-2 -mr-2"
             onClick={() => setMenuOpen((v) => !v)}
@@ -84,7 +76,6 @@ export default function App() {
           </button>
         </nav>
 
-        {/* Mobile dropdown */}
         {menuOpen && (
           <div className="md:hidden bg-navy-light border-t border-white/10 px-4 pb-4 flex flex-col gap-1">
             {allLinks.map((link) => (
