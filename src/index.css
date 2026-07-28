@@ -5,3 +5,52 @@
 body {
   font-family: 'Inter', sans-serif;
 }
+
+/* Engineering blueprint grid, used behind hero sections */
+.blueprint-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Card lift on hover, used across role/member/project cards */
+.lift-card {
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.lift-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px -12px rgba(4, 22, 46, 0.25);
+}
+
+/* SVG circuit-trace draw-in animation */
+.circuit-path {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: draw 2.5s ease-out forwards;
+}
+
+/* Corner-bracket frame, like a technical drawing / blueprint annotation */
+.blueprint-frame {
+  position: relative;
+}
+.blueprint-frame::before,
+.blueprint-frame::after,
+.blueprint-frame > .corner-tl,
+.blueprint-frame > .corner-br {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+.blueprint-frame::before {
+  top: 16px; left: 16px;
+  border-top: 1.5px solid;
+  border-left: 1.5px solid;
+}
+.blueprint-frame::after {
+  bottom: 16px; right: 16px;
+  border-bottom: 1.5px solid;
+  border-right: 1.5px solid;
+}
