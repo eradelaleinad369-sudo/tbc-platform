@@ -10,20 +10,28 @@ const publicLinks = [
   { to: '/apply', label: 'Apply' },
 ]
 
-const memberLinks = [{ to: '/roles', label: 'Roles' }]
+const memberOnlyLinks = [
+  { to: '/roles', label: 'Roles' },
+  { to: '/dashboard', label: 'Dashboard' },
+  { to: '/profile', label: 'Profile' },
+]
 
 export default function App() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const { session } = useAuth()
-  const allLinks = [...memberLinks, ...publicLinks]
 
   async function handleLogout() {
     await supabase.auth.signOut()
     setMenuOpen(false)
     navigate('/')
   }
+
+  const linkClass = (to: string) =>
+    `transition-colors hover:text-brand-orange ${pathname === to ? 'text-brand-orange' : ''}`
+  const mobileLinkClass = (to: string) =>
+    `py-2.5 text-sm text-white/80 hover:text-brand-orange ${pathname === to ? 'text-brand-orange' : ''}`
 
   return (
     <div className="min-h-screen bg-white text-navy">
@@ -38,24 +46,20 @@ export default function App() {
           </Link>
 
           <div className="hidden md:flex items-center gap-6 text-sm text-white/80">
-            {allLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className={`transition-colors hover:text-brand-orange ${pathname === link.to ? 'text-brand-orange' : ''}`}
-              >
+            {publicLinks.map((link) => (
+              <Link key={link.to} to={link.to} className={linkClass(link.to)}>
+                {link.label}
+              </Link>
+            ))}
+            {session && memberOnlyLinks.map((link) => (
+              <Link key={link.to} to={link.to} className={linkClass(link.to)}>
                 {link.label}
               </Link>
             ))}
             {session ? (
-              <>
-                <Link to="/profile" className={`transition-colors hover:text-brand-orange ${pathname === '/profile' ? 'text-brand-orange' : ''}`}>
-                  Profile
-                </Link>
-                <button onClick={handleLogout} className="text-white font-mono text-xs px-4 py-1.5 rounded border border-white/20 hover:border-brand-orange transition-colors">
-                  logout()
-                </button>
-              </>
+              <button onClick={handleLogout} className="text-white font-mono text-xs px-4 py-1.5 rounded border border-white/20 hover:border-brand-orange transition-colors">
+                logout()
+              </button>
             ) : (
               <Link to="/login" className="bg-brand-orange text-navy font-mono text-xs font-semibold px-4 py-1.5 rounded hover:bg-white transition-colors">
                 login()
@@ -78,32 +82,23 @@ export default function App() {
 
         {menuOpen && (
           <div className="md:hidden bg-navy-light border-t border-white/10 px-4 pb-4 flex flex-col gap-1">
-            {allLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                onClick={() => setMenuOpen(false)}
-                className={`py-2.5 text-sm text-white/80 hover:text-brand-orange ${pathname === link.to ? 'text-brand-orange' : ''}`}
-              >
+            {publicLinks.map((link) => (
+              <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)} className={mobileLinkClass(link.to)}>
+                {link.label}
+              </Link>
+            ))}
+            {session && memberOnlyLinks.map((link) => (
+              <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)} className={mobileLinkClass(link.to)}>
                 {link.label}
               </Link>
             ))}
             {session ? (
-              <>
-                <Link
-                  to="/profile"
-                  onClick={() => setMenuOpen(false)}
-                  className={`py-2.5 text-sm text-white/80 hover:text-brand-orange ${pathname === '/profile' ? 'text-brand-orange' : ''}`}
-                >
-                  Profile
-                </Link>
-                <button
-                  onClick={handleLogout}
-                  className="text-white font-mono text-xs px-4 py-2 rounded border border-white/20 text-center mt-2"
-                >
-                  logout()
-                </button>
-              </>
+              <button
+                onClick={handleLogout}
+                className="text-white font-mono text-xs px-4 py-2 rounded border border-white/20 text-center mt-2"
+              >
+                logout()
+              </button>
             ) : (
               <Link
                 to="/login"
@@ -121,7 +116,7 @@ export default function App() {
       </main>
       <footer className="bg-navy text-white/40 text-xs font-mono py-4 mt-16">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2">
-          <span>THE_BUILDERS_CIRCLE · LASU_EPE_CAMPUS</span>
+          <span>THE_BUILDERS_CIRCLE</span>
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-green inline-block" />
             SYSTEM_ONLINE
