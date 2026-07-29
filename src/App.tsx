@@ -114,9 +114,59 @@ export default function App() {
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-10 sm:py-12">
         <Outlet />
       </main>
-      <footer className="bg-navy text-white/40 text-xs font-mono py-4 mt-16">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 flex flex-wrap items-center justify-between gap-2">
-          <span>THE_BUILDERS_CIRCLE</span>
+      <footer className="bg-navy text-white/60 pt-12 pb-6 mt-16">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 grid sm:grid-cols-3 gap-10">
+          <div>
+            <div className="flex items-center gap-3">
+              <img src="/logo.jpg" alt="The Builders Circle" className="h-10 w-10 rounded-full object-cover" />
+              <div>
+                <p className="text-white font-display text-sm leading-tight">THE BUILDERS<br /><span className="text-brand-orange">CIRCLE</span></p>
+              </div>
+            </div>
+            <p className="text-sm mt-4 leading-relaxed">
+              A community that builds engineers who think deeply, solve meaningful problems, and create
+              opportunities for one another.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-white font-semibold mb-4">Quick Links</p>
+            <ul className="space-y-2.5 text-sm">
+              {publicLinks.map((link) => (
+                <li key={link.to}>
+                  <Link to={link.to} className="hover:text-brand-orange transition-colors">{link.label}</Link>
+                </li>
+              ))}
+              {session ? (
+                memberOnlyLinks.map((link) => (
+                  <li key={link.to}>
+                    <Link to={link.to} className="hover:text-brand-orange transition-colors">{link.label}</Link>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <Link to="/login" className="hover:text-brand-orange transition-colors">Member Login</Link>
+                </li>
+              )}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-white font-semibold mb-4">Contact</p>
+            <ul className="space-y-2.5 text-sm">
+              <li className="flex items-center gap-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M2 5h20v14H2z"/><path d="m2 5 10 8L22 5"/></svg>
+                thebuilderscircle@lasu.edu.ng
+              </li>
+              <li>
+                <Link to="/apply" className="hover:text-brand-orange transition-colors">Apply to join</Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 mt-10 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-white/40">
+          <span>© 2026 THE BUILDERS CIRCLE · LASU EPE CAMPUS</span>
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-green inline-block" />
             SYSTEM_ONLINE
