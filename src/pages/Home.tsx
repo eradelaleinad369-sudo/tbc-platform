@@ -65,13 +65,13 @@ export default function Home() {
               to="/apply"
               className="bg-brand-orange text-navy font-mono font-semibold text-sm px-5 py-3 rounded hover:bg-white transition-colors"
             >
-              &gt; apply_to_join()
+               apply_to_join()
             </Link>
             <Link
               to="/projects"
               className="text-white font-mono text-sm px-5 py-3 rounded border border-white/20 hover:border-brand-orange transition-colors"
             >
-              view --projects
+              view projects
             </Link>
           </div>
         </div>
