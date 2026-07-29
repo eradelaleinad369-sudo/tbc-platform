@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import RevealOnScroll from '../components/RevealOnScroll'
 
@@ -6,7 +7,7 @@ type Project = {
   id: string
   title: string
   description: string | null
-  link: string | null
+  cover_image_url: string | null
   is_demo_day: boolean
 }
 
@@ -35,7 +36,7 @@ export default function Projects() {
       {loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="h-24 bg-slate-100 rounded-xl animate-pulse" />
+            <div key={i} className="h-40 bg-slate-100 rounded-xl animate-pulse" />
           ))}
         </div>
       )}
@@ -43,20 +44,20 @@ export default function Projects() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {projects.map((p, i) => (
           <RevealOnScroll key={p.id} delay={i * 60}>
-            <div className="lift-card border border-slate-200 rounded-xl p-5 h-full">
-              <div className="flex items-center justify-between">
-                <p className="font-semibold text-navy">{p.title}</p>
-                {p.is_demo_day && (
-                  <span className="text-xs bg-brand-orange text-white px-2 py-0.5 rounded-full font-medium">Demo Day</span>
-                )}
-              </div>
-              {p.description && <p className="text-sm text-slate-500 mt-2">{p.description}</p>}
-              {p.link && (
-                <a href={p.link} target="_blank" rel="noreferrer" className="text-sm text-brand-green font-medium mt-3 inline-block">
-                  View project →
-                </a>
+            <Link to={`/projects/${p.id}`} className="lift-card block border border-slate-200 rounded-xl overflow-hidden h-full">
+              {p.cover_image_url && (
+                <img src={p.cover_image_url} alt={p.title} className="w-full aspect-[16/9] object-cover" />
               )}
-            </div>
+              <div className="p-5">
+                <div className="flex items-center justify-between">
+                  <p className="font-semibold text-navy">{p.title}</p>
+                  {p.is_demo_day && (
+                    <span className="text-xs bg-brand-orange text-white px-2 py-0.5 rounded-full font-medium shrink-0 ml-2">Demo Day</span>
+                  )}
+                </div>
+                {p.description && <p className="text-sm text-slate-500 mt-2 line-clamp-2">{p.description}</p>}
+              </div>
+            </Link>
           </RevealOnScroll>
         ))}
         {!loading && projects.length === 0 && (
