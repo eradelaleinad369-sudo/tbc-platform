@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { supabase } from '../lib/supabaseClient'
 import CircuitBackground from '../components/CircuitBackground'
-import RevealOnScroll from '../components/RevealOnScroll'
 import AnimatedCounter from '../components/AnimatedCounter'
+import Slideshow, { SlideItem } from '../components/Slideshow'
 
 export default function Home() {
   const [counts, setCounts] = useState({ members: 0, projects: 0, roles: 10 })
   const [debugError, setDebugError] = useState<string | null>(null)
+  const [slides, setSlides] = useState<SlideItem[]>([])
 
   useEffect(() => {
     Promise.all([
@@ -20,11 +21,31 @@ export default function Home() {
       if (errs.length) setDebugError(errs.join(' | '))
       setCounts({ members: m.count ?? 0, projects: p.count ?? 0, roles: 10 })
     })
+
+    Promise.all([
+      supabase.from('projects').select('id, title, cover_image_url, created_at').not('cover_image_url', 'is', null),
+      supabase.from('events').select('id, title, cover_image_url, event_date').not('cover_image_url', 'is', null),
+    ]).then(([p, e]) => {
+      const projectSlides: SlideItem[] = (p.data ?? []).map((x) => ({
+        id: `project-${x.id}`,
+        title: x.title,
+        image: x.cover_image_url!,
+        href: `/projects/${x.id}`,
+        tag: 'Project',
+      }))
+      const eventSlides: SlideItem[] = (e.data ?? []).map((x) => ({
+        id: `event-${x.id}`,
+        title: x.title,
+        image: x.cover_image_url!,
+        href: `/events/${x.id}`,
+        tag: 'Event',
+      }))
+      setSlides([...eventSlides, ...projectSlides])
+    })
   }, [])
 
   return (
     <div>
-      {/* Hero */}
       <section className="relative -mx-4 sm:-mx-6 px-4 sm:px-6 py-16 sm:py-24 bg-navy rounded-b-3xl overflow-hidden blueprint-frame">
         <CircuitBackground />
         <div className="relative max-w-2xl mx-auto md:mx-0 md:ml-8">
@@ -60,7 +81,6 @@ export default function Home() {
         <p className="text-red-600 text-xs font-mono mt-3 break-words">stats_error: {debugError}</p>
       )}
 
-      {/* Live stats — labeled like instrument readouts */}
       <section className="grid grid-cols-3 gap-px bg-slate-200 -mt-8 relative z-10 max-w-lg mx-auto border border-slate-200 rounded-lg overflow-hidden">
         {[
           { label: 'ACTIVE_MEMBERS', value: counts.members },
@@ -76,21 +96,12 @@ export default function Home() {
         ))}
       </section>
 
-      {/* Quick links */}
-      <section className="grid sm:grid-cols-3 gap-5 mt-16">
-        {[
-          { to: '/roles', title: '01 · Roles', desc: 'Who leads what, and why each role exists.', delay: 0 },
-          { to: '/members', title: '02 · Members', desc: 'The people building with us.', delay: 100 },
-          { to: '/projects', title: '03 · Projects', desc: "What we've actually shipped.", delay: 200 },
-        ].map((item) => (
-          <RevealOnScroll key={item.to} delay={item.delay}>
-            <Link to={item.to} className="lift-card block border border-slate-200 rounded-lg p-6 h-full">
-              <p className="text-brand-orange font-mono text-xs tracking-widest mb-2">{item.title}</p>
-              <p className="text-sm text-slate-500">{item.desc}</p>
-            </Link>
-          </RevealOnScroll>
-        ))}
-      </section>
+      {slides.length > 0 && (
+        <section className="mt-16">
+          <p className="text-brand-green font-mono text-sm tracking-widest uppercase mb-4">// recent recaps</p>
+          <Slideshow items={slides} />
+        </section>
+      )}
     </div>
   )
 }
