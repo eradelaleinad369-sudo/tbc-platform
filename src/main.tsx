@@ -7,6 +7,9 @@ import Home from './pages/Home'
 import Roles from './pages/Roles'
 import Members from './pages/Members'
 import Projects from './pages/Projects'
+import ProjectDetail from './pages/ProjectDetail'
+import Events from './pages/Events'
+import EventDetail from './pages/EventDetail'
 import Apply from './pages/Apply'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
@@ -25,6 +28,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route index element={<Home />} />
             <Route path="members" element={<Members />} />
             <Route path="projects" element={<Projects />} />
+            <Route path="projects/:id" element={<ProjectDetail />} />
+            <Route path="events" element={<Events />} />
+            <Route path="events/:id" element={<EventDetail />} />
             <Route path="apply" element={<Apply />} />
             <Route path="login" element={<Login />} />
             <Route path="signup" element={<SignUp />} />
