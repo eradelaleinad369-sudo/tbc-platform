@@ -157,7 +157,7 @@ export default function App() {
             <ul className="space-y-2.5 text-sm">
               <li className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M2 5h20v14H2z"/><path d="m2 5 10 8L22 5"/></svg>
-                thebuilderscircle@lasu.edu.ng
+                info.thebuilderscircle@gmail.com
               </li>
               <li>
                 <Link to="/apply" className="hover:text-brand-orange transition-colors">Apply to join</Link>
