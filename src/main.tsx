@@ -23,7 +23,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <Routes>
           <Route path="/" element={<App />}>
             <Route index element={<Home />} />
-            <Route path="roles" element={<Roles />} />
             <Route path="members" element={<Members />} />
             <Route path="projects" element={<Projects />} />
             <Route path="apply" element={<Apply />} />
@@ -35,6 +34,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </Route>
 
             <Route element={<RequireActiveMember />}>
+              <Route path="roles" element={<Roles />} />
               <Route path="dashboard" element={<Dashboard />} />
             </Route>
           </Route>
