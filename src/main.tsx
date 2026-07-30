@@ -15,8 +15,10 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import Dashboard from './pages/Dashboard'
 import Profile from './pages/Profile'
+import Admin from './pages/Admin'
 import RequireAuth from './components/RequireAuth'
 import RequireActiveMember from './components/RequireActiveMember'
+import RequireAdmin from './components/RequireAdmin'
 import { AuthProvider } from './lib/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
@@ -42,6 +44,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             <Route element={<RequireActiveMember />}>
               <Route path="roles" element={<Roles />} />
               <Route path="dashboard" element={<Dashboard />} />
+            </Route>
+
+            <Route element={<RequireAdmin />}>
+              <Route path="tbc-admin" element={<Admin />} />
             </Route>
           </Route>
         </Routes>
