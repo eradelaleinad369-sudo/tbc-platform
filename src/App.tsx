@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './lib/supabaseClient'
 import { useAuth } from './lib/AuthContext'
@@ -22,6 +22,22 @@ export default function App() {
   const navigate = useNavigate()
   const [menuOpen, setMenuOpen] = useState(false)
   const { session } = useAuth()
+  const [isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(() => {
+    if (!session) {
+      setIsAdmin(false)
+      return
+    }
+    supabase
+      .from('members')
+      .select('is_admin')
+      .eq('auth_user_id', session.user.id)
+      .single()
+      .then(({ data }) => setIsAdmin(!!data?.is_admin))
+  }, [session])
+
+  const navLinks = isAdmin ? [...memberOnlyLinks, { to: '/tbc-admin', label: 'Admin' }] : memberOnlyLinks
 
   async function handleLogout() {
     await supabase.auth.signOut()
@@ -52,7 +68,7 @@ export default function App() {
                 {link.label}
               </Link>
             ))}
-            {session && memberOnlyLinks.map((link) => (
+            {session && navLinks.map((link) => (
               <Link key={link.to} to={link.to} className={linkClass(link.to)}>
                 {link.label}
               </Link>
@@ -88,7 +104,7 @@ export default function App() {
                 {link.label}
               </Link>
             ))}
-            {session && memberOnlyLinks.map((link) => (
+            {session && navLinks.map((link) => (
               <Link key={link.to} to={link.to} onClick={() => setMenuOpen(false)} className={mobileLinkClass(link.to)}>
                 {link.label}
               </Link>
@@ -139,7 +155,7 @@ export default function App() {
                 </li>
               ))}
               {session ? (
-                memberOnlyLinks.map((link) => (
+                navLinks.map((link) => (
                   <li key={link.to}>
                     <Link to={link.to} className="hover:text-brand-orange transition-colors">{link.label}</Link>
                   </li>
@@ -157,7 +173,7 @@ export default function App() {
             <ul className="space-y-2.5 text-sm">
               <li className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M2 5h20v14H2z"/><path d="m2 5 10 8L22 5"/></svg>
-                info.thebuilderscircle@gmail.com
+                thebuilderscircle@lasu.edu.ng
               </li>
               <li>
                 <Link to="/apply" className="hover:text-brand-orange transition-colors">Apply to join</Link>
