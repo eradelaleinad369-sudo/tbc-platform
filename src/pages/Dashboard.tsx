@@ -92,7 +92,7 @@ export default function Dashboard() {
 
     const { error } = await supabase.from('submissions').insert({
       member_id: memberId,
-      full_name: form.get('full_name'),
+      full_name: fullName,
       project_name: form.get('project_name'),
       description: form.get('description'),
       github_link: (form.get('github_link') as string) || null,
@@ -162,13 +162,11 @@ export default function Dashboard() {
 
         <form onSubmit={handleSubmit} className="space-y-4 border border-slate-200 rounded-xl p-5">
           <div className="grid sm:grid-cols-2 gap-4">
-            <input name="full_name" placeholder="Full name" defaultValue={fullName} key={fullName} required
-              className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
             <input name="week" placeholder="Week (e.g. Week 1)" required
               className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
+            <input name="project_name" placeholder="Project name" required
+              className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
           </div>
-          <input name="project_name" placeholder="Project name" required
-            className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
           <textarea name="description" placeholder="What did you build?" rows={3} required
             className="w-full border border-slate-300 rounded px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 focus:border-brand-orange" />
           <input name="github_link" type="url" placeholder="GitHub link (optional)"
